@@ -1,5 +1,6 @@
 ﻿using LanchesBufaNew.Models;
 using LanchesBufaNew.Repositories.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LanchesBufaNew.Controllers;
@@ -15,12 +16,14 @@ public class PedidoController : Controller
         _carrinhoCompra = carrinhoCompra;
     }
 
+    [Authorize]
     [HttpGet]
     public IActionResult Checkout()
     {
         return View();
     }
 
+    [Authorize]
     [HttpPost]
     public IActionResult Checkout(Pedido pedido)
     {

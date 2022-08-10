@@ -2,6 +2,7 @@
 using LanchesBufaNew.Models;
 using LanchesBufaNew.Repositories;
 using LanchesBufaNew.Repositories.Interfaces;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
 namespace LanchesBufaNew;
@@ -18,6 +19,19 @@ public class Startup
     {
         services.AddDbContext<AppDbContext>(options =>
             options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));
+
+        services.AddIdentity<IdentityUser, IdentityRole>()
+            .AddEntityFrameworkStores<AppDbContext>()
+            .AddDefaultTokenProviders();
+
+        services.Configure<IdentityOptions>(opts =>
+        {
+            opts.Password.RequireNonAlphanumeric = false;
+            opts.Password.RequireDigit = false;
+            opts.Password.RequireLowercase = false;
+            opts.Password.RequireUppercase = false;
+            opts.Password.RequiredLength = 6;
+        });
 
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
@@ -47,6 +61,7 @@ public class Startup
         app.UseStaticFiles();
         app.UseRouting();
         app.UseSession();
+        app.UseAuthentication();
         app.UseAuthorization();
 
         app.UseEndpoints(endpoints =>
@@ -58,7 +73,7 @@ public class Startup
                 name: "categoriaFiltro",
                 pattern: "Lanche/{action}/{categoria?}",
                 defaults: new { controller = "Lanche", Action = "List" });
-            
+
             endpoints.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");

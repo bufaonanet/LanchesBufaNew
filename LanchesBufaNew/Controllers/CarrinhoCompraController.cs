@@ -1,6 +1,7 @@
 ﻿using LanchesBufaNew.Models;
 using LanchesBufaNew.Repositories.Interfaces;
 using LanchesBufaNew.ViewModels;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LanchesBufaNew.Controllers;
@@ -30,6 +31,7 @@ public class CarrinhoCompraController : Controller
         return View(carrinhoCompraVM);
     }
 
+    [Authorize]
     public IActionResult AdicionarItemNoCarrinhoCompra(int lancheId)
     {
         var lancheSelecionado = _lancheRepository.Lanches
@@ -41,6 +43,7 @@ public class CarrinhoCompraController : Controller
         return RedirectToAction(nameof(Index));   
     }
 
+    [Authorize]
     public IActionResult RemoverItemDoCarrinhoCompra(int lancheId)
     {
         var lancheSelecionado = _lancheRepository.Lanches
