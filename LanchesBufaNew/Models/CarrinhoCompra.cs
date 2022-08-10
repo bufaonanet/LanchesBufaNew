@@ -85,7 +85,7 @@ public class CarrinhoCompra
         return quantidadeLocal;
     }
 
-    public List<CarrinhoCompraItem> GetCarrinhoCompraItems()
+    public List<CarrinhoCompraItem> GetCarrinhoCompraItens()
     {
         return CarrinhoCompraItens ??
             (CarrinhoCompraItens = _context.CarrinhoCompraItens

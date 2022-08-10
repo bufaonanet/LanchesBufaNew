@@ -23,6 +23,7 @@ public class Startup
 
         services.AddScoped<ICategoriaRepository, CategoriaRepository>();
         services.AddScoped<ILancheRepository, LancheRepository>();
+        services.AddScoped<IPedidoRepository, PedidoRepository>();
         services.AddScoped(sp => CarrinhoCompra.GetCarrinho(sp));
 
         services.AddControllersWithViews();
