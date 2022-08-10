@@ -1,4 +1,6 @@
 ﻿using LanchesBufaNew.Models;
+using LanchesBufaNew.Repositories.Interfaces;
+using LanchesBufaNew.ViewModels;
 using Microsoft.AspNetCore.Mvc;
 using System.Diagnostics;
 
@@ -6,21 +8,19 @@ namespace LanchesBufaNew.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
+        private readonly ILancheRepository _lancheRepository;
+        public HomeController(ILancheRepository lancheRepository)
         {
-            _logger = logger;
+            _lancheRepository = lancheRepository;
         }
 
         public IActionResult Index()
         {
-            return View();
-        }
-
-        public IActionResult Demo()
-        {
-            return View();
+            var homeVM = new HomeViewModel
+            {
+                LanchesPreferidos = _lancheRepository.LanchesPreferidos
+            };
+            return View(homeVM);
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
