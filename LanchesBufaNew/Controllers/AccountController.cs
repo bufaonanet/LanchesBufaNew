@@ -67,10 +67,11 @@ public class AccountController : Controller
 
         if (result.Succeeded)
         {
+            await _userManager.AddToRoleAsync(user, "Member");
             return RedirectToAction(nameof(Login));
         }
 
-        ModelState.AddModelError("Registro", "Falah ao realizar o registro");
+        ModelState.AddModelError("Registro", "Falha ao realizar o registro");
         return View(loginVM);
     }
 
@@ -81,5 +82,11 @@ public class AccountController : Controller
         HttpContext.User = null;
         await _signInManager.SignOutAsync();
         return RedirectToAction("Index", "Home");
+    }
+
+    [HttpGet]
+    public IActionResult AccessDenied()
+    {
+        return View();
     }
 }

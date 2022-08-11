@@ -2,6 +2,7 @@
 using LanchesBufaNew.Models;
 using LanchesBufaNew.Repositories;
 using LanchesBufaNew.Repositories.Interfaces;
+using LanchesBufaNew.Services;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 
@@ -33,11 +34,17 @@ public class Startup
             opts.Password.RequiredLength = 6;
         });
 
+        services.AddAuthorization(options =>
+        {
+            options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+        });
+
         services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
         services.AddScoped<ICategoriaRepository, CategoriaRepository>();
         services.AddScoped<ILancheRepository, LancheRepository>();
         services.AddScoped<IPedidoRepository, PedidoRepository>();
+        services.AddScoped<ISeedUserRoleInitial, SeedUserRoleInitial>();
         services.AddScoped(sp => CarrinhoCompra.GetCarrinho(sp));
 
         services.AddControllersWithViews();
@@ -45,7 +52,9 @@ public class Startup
         services.AddSession();
     }
 
-    public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
+    public void Configure(IApplicationBuilder app,
+                          IWebHostEnvironment env,
+                          ISeedUserRoleInitial seedUserRole)
     {
         if (env.IsDevelopment())
         {
@@ -64,10 +73,15 @@ public class Startup
         app.UseAuthentication();
         app.UseAuthorization();
 
+        //Criando Roles e Users 
+        seedUserRole.SeedRoles();
+        seedUserRole.SeedUsers();
+
         app.UseEndpoints(endpoints =>
         {
-            //Faz um mapeamento padrão de rota
-            //endpoints.MapDefaultControllerRoute();
+            endpoints.MapControllerRoute(
+                name: "areas",
+                pattern: "{area:exists}/{controller=Admin}/{action=Index}/{id?}");
 
             endpoints.MapControllerRoute(
                 name: "categoriaFiltro",
@@ -77,6 +91,9 @@ public class Startup
             endpoints.MapControllerRoute(
                 name: "default",
                 pattern: "{controller=Home}/{action=Index}/{id?}");
+
+            //Faz um mapeamento padrão de rota
+            //endpoints.MapDefaultControllerRoute();
         });
     }
 }
